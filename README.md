@@ -11,6 +11,7 @@ This project is intended to demonstrate fullstack development skills, including 
 
 ## Project Structure
 
+```
 portfolio-fullstack/
 ├── api/ # Backend (Express + TypeScript)
 ├── web/ # Frontend (Next.js + TypeScript)
@@ -18,6 +19,7 @@ portfolio-fullstack/
 ├── .gitignore
 ├── README.md
 └── LICENSE
+```
 
 ## Setup Instructions
 
@@ -31,22 +33,30 @@ cd portofolio-fullstack
 2.  **Install dependencies**
 
 - Frontend:
+```
   cd web
   npm install
+```
 
 - Backend:
+```
   cd ../api
   npm install
+```
 
 3.  **Run the apps locally**
 
 - Frontend:
+```
   cd web
   npm run dev
+```
 
 - Backend:
+```
   cd api
   npm run dev
+```
 
 Check http://localhost:4000/health
 

@@ -3,8 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import { PrismaClient } from "@prisma/client";
 import projectRouter from "./routes/projects";
-const prisma = new PrismaClient();
+import { errorHandler } from "./middleware/errorHandler";
 
+const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors());
@@ -21,6 +22,8 @@ app.get("/users", async (req, res) => {
   const users = await prisma.user.findMany();
   res.json(users);
 });
+
+app.use(errorHandler);
 
 const PORT = 4000;
 app.listen(PORT, () => {

@@ -1,13 +1,16 @@
 import request from "supertest";
 import app from "../src/app";
 import { PrismaClient } from "@prisma/client";
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect, beforeAll } from "@jest/globals";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
 describe("Projects API", () => {
   let testProjectId: number;
   const testUser = { id: 1 }; // Created in setup.ts
+  let adminCookie: string;
+  let adminAuth: string;
 
   const testProject = {
     title: "Test Project",
@@ -16,9 +19,45 @@ describe("Projects API", () => {
     userId: testUser.id,
   };
 
+  beforeAll(async () => {
+    // ensure we have an admin cookie for protected endpoints
+    const admin = await prisma.user.findUnique({
+      where: { email: "admin@example.com" },
+    });
+    if (admin) {
+      const token = jwt.sign(
+        { id: admin.id, role: admin.role },
+        process.env.JWT_SECRET as string,
+        {
+          expiresIn: "7d",
+        }
+      );
+      adminCookie = `token=${token}`;
+      adminAuth = `Bearer ${token}`;
+    }
+  });
+
   describe("POST /projects", () => {
     it("should create a new project", async () => {
-      const res = await request(app).post("/projects").send(testProject);
+      // login as admin to get cookie for protected route
+      if (!adminCookie) {
+        const login = await request(app)
+          .post("/auth/login")
+          .send({ email: "admin@example.com", password: "adminpass" });
+        const setHeader = login.headers["set-cookie"];
+        const set = Array.isArray(setHeader)
+          ? setHeader
+          : setHeader
+          ? [setHeader as string]
+          : undefined;
+        adminCookie = set && set.length ? set[0].split(";")[0] : "";
+      }
+
+      const res = await request(app)
+        .post("/projects")
+        .set("Cookie", adminCookie)
+        .set("Authorization", adminAuth)
+        .send(testProject);
 
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("id");
@@ -28,7 +67,11 @@ describe("Projects API", () => {
     });
 
     it("should return 400 for invalid project data", async () => {
-      const res = await request(app).post("/projects").send({ title: "" });
+      const res = await request(app)
+        .post("/projects")
+        .set("Cookie", adminCookie)
+        .set("Authorization", adminAuth)
+        .send({ title: "" });
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("error", "Invalid data");
@@ -91,6 +134,8 @@ describe("Projects API", () => {
 
       const res = await request(app)
         .put(`/projects/${testProjectId}`)
+        .set("Cookie", adminCookie)
+        .set("Authorization", adminAuth)
         .send(updateData);
 
       expect(res.status).toBe(200);
@@ -100,7 +145,10 @@ describe("Projects API", () => {
 
   describe("DELETE /projects/:id", () => {
     it("should delete a project", async () => {
-      const res = await request(app).delete(`/projects/${testProjectId}`);
+      const res = await request(app)
+        .delete(`/projects/${testProjectId}`)
+        .set("Cookie", adminCookie)
+        .set("Authorization", adminAuth);
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("message", "Project deleted");

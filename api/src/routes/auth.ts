@@ -20,39 +20,43 @@ export const loginSchema = z.object({
 });
 
 // POST /auth/register
-router.post("/register", validateBody(registerSchema), async (req, res, next) => {
-  try {
-    const { name, email, password } = req.body as {
-      name: string;
-      email: string;
-      password: string;
-    };
+router.post(
+  "/register",
+  validateBody(registerSchema),
+  async (req, res, next) => {
+    try {
+      const { name, email, password } = req.body as {
+        name: string;
+        email: string;
+        password: string;
+      };
 
-    // check if user already exists
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return next({ status: 409, message: "Email already in use" });
+      // check if user already exists
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        return next({ status: 409, message: "Email already in use" });
+      }
+
+      // hash password
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const user = await prisma.user.create({
+        data: { name, email, passwordHash },
+      });
+
+      const safeUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      };
+
+      res.status(201).json({ user: safeUser });
+    } catch (err) {
+      next(err);
     }
-
-    // hash password
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
-      data: { name, email, passwordHash },
-    });
-
-    const safeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
-
-    res.status(201).json({ user: safeUser });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // POST /auth/login
 router.post("/login", validateBody(loginSchema), async (req, res, next) => {
@@ -93,8 +97,14 @@ router.post("/login", validateBody(loginSchema), async (req, res, next) => {
 
 // POST /auth/logout
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.json({ ok: true });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  });
+  // respond with 204 No Content to indicate successful logout
+  res.status(204).send();
 });
 
 export default router;

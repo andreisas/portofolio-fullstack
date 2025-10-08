@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { execSync } from "child_process";
 import { beforeAll, afterAll, jest } from "@jest/globals";
+import bcrypt from "bcryptjs";
 
 // Note: Environment variables are loaded by jest.env.ts before this runs
 const prisma = new PrismaClient();
@@ -20,13 +21,30 @@ beforeAll(async () => {
     },
   });
 
+  // inside beforeAll, after migrations:
+  const plain = "password123";
+  const passwordHash = await bcrypt.hash(plain, 10);
+
   // Create test user
   await prisma.user.create({
     data: {
       name: "Test User",
       email: "test@example.com",
-      password: "password123",
-      role: "USER",
+      passwordHash,
+    },
+  });
+
+  // Create an admin user for tests (use upsert in case migrations/seed already created it)
+  const adminPlain = "adminpass";
+  const adminHash = await bcrypt.hash(adminPlain, 10);
+  await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: { passwordHash: adminHash, role: "ADMIN" },
+    create: {
+      name: "Admin",
+      email: "admin@example.com",
+      passwordHash: adminHash,
+      role: "ADMIN",
     },
   });
 });

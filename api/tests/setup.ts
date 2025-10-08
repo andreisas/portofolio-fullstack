@@ -33,6 +33,20 @@ beforeAll(async () => {
       passwordHash,
     },
   });
+
+  // Create an admin user for tests (use upsert in case migrations/seed already created it)
+  const adminPlain = "adminpass";
+  const adminHash = await bcrypt.hash(adminPlain, 10);
+  await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: { passwordHash: adminHash, role: "ADMIN" },
+    create: {
+      name: "Admin",
+      email: "admin@example.com",
+      passwordHash: adminHash,
+      role: "ADMIN",
+    },
+  });
 });
 
 afterAll(async () => {

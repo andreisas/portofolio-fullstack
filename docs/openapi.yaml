@@ -181,6 +181,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Project"
+              examples:
+                example-1:
+                  value:
+                    - id: 1
+                      title: "Test Project"
+                      description: "Test Description"
+                      stack: ["Node.js", "TypeScript"]
+                      userId: 1
+                    - id: 2
+                      title: "Another Project"
+                      description: "Another description"
+                      stack: ["React", "Vercel"]
+                      userId: 2
     post:
       summary: Create a project (admin)
       security:
@@ -251,6 +264,11 @@ paths:
           application/json:
             schema:
               type: object
+            examples:
+              example-1:
+                summary: Update title
+                value:
+                  title: "Updated Project"
       responses:
         "200":
           description: Updated
@@ -258,6 +276,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                updated:
+                  value:
+                    id: 1
+                    title: "Updated Project"
+                    description: "Test Description"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "403":
           $ref: "#/components/schemas/ErrorResponse"
     delete:
@@ -267,5 +293,20 @@ paths:
       responses:
         "200":
           description: Deleted
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    message: "Project deleted"
         "403":
           $ref: "#/components/schemas/ErrorResponse"
+
+  # reusable error example
+components:
+  examples:
+    UnauthorizedError:
+      summary: Unauthorized
+      value:
+        error: "Unauthorized"
+        details: []

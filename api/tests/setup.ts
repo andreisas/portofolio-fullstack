@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 
 beforeAll(async () => {
   jest.spyOn(console, "error").mockImplementation(() => {});
-  // Reset the database before running tests
-  await prisma.$executeRawUnsafe(`DROP SCHEMA public CASCADE;`);
-  await prisma.$executeRawUnsafe(`CREATE SCHEMA public;`);
+  // Reset the database before running tests (use IF EXISTS to avoid race conditions)
+  await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS public CASCADE;`);
+  await prisma.$executeRawUnsafe(`CREATE SCHEMA IF NOT EXISTS public;`);
 
   // Apply migrations to test database with explicit environment variable
   execSync("npx prisma migrate deploy", {
@@ -25,9 +25,11 @@ beforeAll(async () => {
   const plain = "password123";
   const passwordHash = await bcrypt.hash(plain, 10);
 
-  // Create test user
-  await prisma.user.create({
-    data: {
+  // Create (or update) test user - use upsert to avoid unique constraint races
+  await prisma.user.upsert({
+    where: { email: "test@example.com" },
+    update: { passwordHash },
+    create: {
       name: "Test User",
       email: "test@example.com",
       passwordHash,

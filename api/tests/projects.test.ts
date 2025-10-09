@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.test" });
 import request from "supertest";
 import app from "../src/app";
 import { PrismaClient } from "@prisma/client";

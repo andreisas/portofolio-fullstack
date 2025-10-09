@@ -1,77 +1,89 @@
 # Fullstack Portfolio
 
-A personal fullstack portfolio project built with:
+This repository contains a fullstack portfolio example. It includes:
 
-- **Frontend:** React + Next.js + TypeScript
-- **Backend:** Node.js + Express + TypeScript
-- **Database:** PostgreSQL (with Prisma ORM)
-- **API:** REST endpoints for projects, blog posts, and contact form
+- Frontend: Next.js (TypeScript)
+- Backend: Node.js + Express (TypeScript) with Prisma (Postgres)
 
-This project is intended to demonstrate fullstack development skills, including API design, database integration, authentication, and deployment.
+This README focuses on local setup, testing, and using the API docs.
 
-## Project Structure
+## Quick start (dev)
 
-```
-portfolio-fullstack/
-├── api/ # Backend (Express + TypeScript)
-├── web/ # Frontend (Next.js + TypeScript)
-├── docs/ # Architecture diagrams, design notes
-├── .gitignore
-├── README.md
-└── LICENSE
-```
+1. Clone the repo
 
-## Setup Instructions
-
-1. **Clone the repository**
-
-```bash
+```powershell
 git clone git@github.com:andreisas/portofolio-fullstack.git
 cd portofolio-fullstack
 ```
 
-2.  **Install dependencies**
+2. Start the backend (API)
 
-- Frontend:
-```
-  cd web
-  npm install
-```
-
-- Backend:
-```
-  cd ../api
-  npm install
+```powershell
+cd api
+npm install
+npm run dev
 ```
 
-3.  **Run the apps locally**
+API health: http://localhost:4000/health
+API docs (Swagger UI): http://localhost:4000/docs
 
-- Frontend:
-```
-  cd web
-  npm run dev
-```
+3. Start the frontend
 
-- Backend:
-```
-  cd api
-  npm run dev
+```powershell
+cd ../web
+npm install
+npm run dev
 ```
 
-Check http://localhost:4000/health
+## Environment
 
-4.  **Run PostgreSQL with Docker**
+Copy or create environment files for each workspace. Example files are stored near their package folders.
 
-docker run --name pg -e POSTGRES_USER=me -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=mydb -p 5432:5432 -d postgres:15
+- `api/.env` — backend environment (DATABASE_URL, JWT_SECRET, etc.)
 
-## Notes
+Example `.env` values (do not commit secrets):
 
-- ESLint, Prettier, and Husky are set up for consistent code formatting.
+```env
+DATABASE_URL=postgresql://me:secret@localhost:5432/portfolio
+JWT_SECRET=some-strong-secret
+```
 
-- Architecture diagram is in the docs/ folder.
+## Database migrations & seed
 
-- Environment variables should be added to .env. See .env.example for reference.
+Uses Prisma. From `api/`:
+
+```powershell
+npx prisma migrate deploy   # apply migrations (use in CI/production)
+npx prisma migrate dev      # run and create migrations in dev
+node ./prisma/seed.ts       # seed the DB (dev/test)
+```
+
+## Tests
+
+Backend tests are in `api/tests` (Jest + Supertest). Run from `api/`:
+
+```powershell
+cd api
+npm test -- --runInBand
+```
+
+Tip: `--runInBand` avoids worker-related race conditions while debugging locally.
+
+## API Documentation
+
+We maintain an OpenAPI spec at `docs/openapi.yaml` and serve Swagger UI in development at `/docs`.
+
+- View docs locally after starting the API: http://localhost:4000/docs
+- The spec contains request/response examples and schemas for `User` and `Project`.
+
+## CI and Linting
+
+CI runs tests and checks. Consider adding OpenAPI validation to CI (Spectral) if you rely on contract guarantees.
+
+## Contributing
+
+PRs are welcome. Follow the repo coding standards and include tests for API changes.
 
 ## License
 
-This project is licensed under the MIT License. See LICENSE for details.
+MIT — see the `LICENSE` file for details.

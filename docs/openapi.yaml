@@ -93,6 +93,13 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/RegisterRequest"
+            examples:
+              example-1:
+                summary: Happy path
+                value:
+                  name: "Alice Admin"
+                  email: "alice@example.com"
+                  password: "secret123"
       responses:
         "201":
           description: Created
@@ -103,6 +110,14 @@ paths:
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
+              examples:
+                created:
+                  value:
+                    user:
+                      id: 1
+                      name: "Alice Admin"
+                      email: "alice@example.com"
+                      role: "USER"
         "400":
           $ref: "#/components/schemas/ErrorResponse"
   /auth/login:
@@ -114,9 +129,25 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/LoginRequest"
+            examples:
+              example-1:
+                summary: Login example
+                value:
+                  email: "alice@example.com"
+                  password: "secret123"
       responses:
         "200":
           description: OK (cookie set)
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    user:
+                      id: 1
+                      name: "Alice Admin"
+                      email: "alice@example.com"
+                      role: "USER"
         "401":
           $ref: "#/components/schemas/ErrorResponse"
   /auth/logout:
@@ -160,6 +191,14 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ProjectCreateRequest"
+            examples:
+              example-1:
+                summary: Create project
+                value:
+                  title: "New Site"
+                  description: "A new portfolio site"
+                  stack: ["Node.js", "TypeScript"]
+                  userId: 1
       responses:
         "201":
           description: Created
@@ -167,6 +206,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                created:
+                  value:
+                    id: 10
+                    title: "New Site"
+                    description: "A new portfolio site"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "403":
           $ref: "#/components/schemas/ErrorResponse"
   /projects/{id}:
@@ -185,6 +232,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    title: "Test Project"
+                    description: "Test Description"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "404":
           $ref: "#/components/schemas/ErrorResponse"
     put:

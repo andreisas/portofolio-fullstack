@@ -8,6 +8,8 @@ import projectRouter from "./routes/projects";
 import { errorHandler } from "./middleware/errorHandler";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -29,6 +31,19 @@ app.use(
 
 app.use("/auth", authRouter);
 app.use("/projects", projectRouter);
+// serve OpenAPI docs if present
+try {
+  const openapi = YAML.load("./docs/openapi.yaml");
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
+} catch (err: unknown) {
+  // ignore if docs are not present in some environments
+  if (err && typeof err === "object" && "message" in err) {
+    // @ts-ignore - runtime message
+    console.warn("OpenAPI docs not mounted:", (err as any).message);
+  } else {
+    console.warn("OpenAPI docs not mounted");
+  }
+}
 app.get("/health", (req, res) => {
   res.json({ ok: true });
 });

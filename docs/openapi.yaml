@@ -1,0 +1,216 @@
+openapi: 3.0.3
+info:
+  title: Portfolio Fullstack API
+  version: 1.0.0
+  description: >-
+    Minimal OpenAPI spec covering authentication and projects endpoints.
+servers:
+  - url: http://localhost:3000
+    description: Local dev server
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        stack:
+          type: array
+          items:
+            type: string
+        userId:
+          type: integer
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    ProjectCreateRequest:
+      type: object
+      required: [title, description, stack, userId]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        stack:
+          type: array
+          items:
+            type: string
+        userId:
+          type: integer
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/schemas/ErrorResponse"
+  /auth/login:
+    post:
+      summary: Login and set auth cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: OK (cookie set)
+        "401":
+          $ref: "#/components/schemas/ErrorResponse"
+  /auth/logout:
+    post:
+      summary: Logout (clear cookie)
+      responses:
+        "204":
+          description: No Content
+  /projects:
+    get:
+      summary: List projects
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: stack
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      summary: Create a project (admin)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreateRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "403":
+          $ref: "#/components/schemas/ErrorResponse"
+  /projects/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get project by id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update a project (admin)
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "403":
+          $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete a project (admin)
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Deleted
+        "403":
+          $ref: "#/components/schemas/ErrorResponse"

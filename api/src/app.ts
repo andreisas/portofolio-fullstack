@@ -23,11 +23,11 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
-app.use("/auth", authRouter);
-
 app.use(
   morgan(":method :url :status :response-time ms - :res[content-length] :body")
 );
+
+app.use("/auth", authRouter);
 app.use("/projects", projectRouter);
 app.get("/health", (req, res) => {
   res.json({ ok: true });

@@ -5,7 +5,7 @@ info:
   description: >-
     Minimal OpenAPI spec covering authentication and projects endpoints.
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:4000
     description: Local dev server
 components:
   securitySchemes:
@@ -93,6 +93,13 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/RegisterRequest"
+            examples:
+              example-1:
+                summary: Happy path
+                value:
+                  name: "Alice Admin"
+                  email: "alice@example.com"
+                  password: "secret123"
       responses:
         "201":
           description: Created
@@ -103,6 +110,14 @@ paths:
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
+              examples:
+                created:
+                  value:
+                    user:
+                      id: 1
+                      name: "Alice Admin"
+                      email: "alice@example.com"
+                      role: "USER"
         "400":
           $ref: "#/components/schemas/ErrorResponse"
   /auth/login:
@@ -114,9 +129,25 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/LoginRequest"
+            examples:
+              example-1:
+                summary: Login example
+                value:
+                  email: "alice@example.com"
+                  password: "secret123"
       responses:
         "200":
           description: OK (cookie set)
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    user:
+                      id: 1
+                      name: "Alice Admin"
+                      email: "alice@example.com"
+                      role: "USER"
         "401":
           $ref: "#/components/schemas/ErrorResponse"
   /auth/logout:
@@ -150,6 +181,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Project"
+              examples:
+                example-1:
+                  value:
+                    - id: 1
+                      title: "Test Project"
+                      description: "Test Description"
+                      stack: ["Node.js", "TypeScript"]
+                      userId: 1
+                    - id: 2
+                      title: "Another Project"
+                      description: "Another description"
+                      stack: ["React", "Vercel"]
+                      userId: 2
     post:
       summary: Create a project (admin)
       security:
@@ -160,6 +204,14 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ProjectCreateRequest"
+            examples:
+              example-1:
+                summary: Create project
+                value:
+                  title: "New Site"
+                  description: "A new portfolio site"
+                  stack: ["Node.js", "TypeScript"]
+                  userId: 1
       responses:
         "201":
           description: Created
@@ -167,6 +219,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                created:
+                  value:
+                    id: 10
+                    title: "New Site"
+                    description: "A new portfolio site"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "403":
           $ref: "#/components/schemas/ErrorResponse"
   /projects/{id}:
@@ -185,6 +245,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    title: "Test Project"
+                    description: "Test Description"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "404":
           $ref: "#/components/schemas/ErrorResponse"
     put:
@@ -196,6 +264,11 @@ paths:
           application/json:
             schema:
               type: object
+            examples:
+              example-1:
+                summary: Update title
+                value:
+                  title: "Updated Project"
       responses:
         "200":
           description: Updated
@@ -203,6 +276,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+              examples:
+                updated:
+                  value:
+                    id: 1
+                    title: "Updated Project"
+                    description: "Test Description"
+                    stack: ["Node.js", "TypeScript"]
+                    userId: 1
         "403":
           $ref: "#/components/schemas/ErrorResponse"
     delete:
@@ -212,5 +293,20 @@ paths:
       responses:
         "200":
           description: Deleted
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    message: "Project deleted"
         "403":
           $ref: "#/components/schemas/ErrorResponse"
+
+  # reusable error example
+components:
+  examples:
+    UnauthorizedError:
+      summary: Unauthorized
+      value:
+        error: "Unauthorized"
+        details: []

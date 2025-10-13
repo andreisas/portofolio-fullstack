@@ -14,7 +14,7 @@ export default function RootLayout({
         <header className="bg-white/80 backdrop-blur sticky top-0 z-10 border-b">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3 flex items-center justify-between">
             <Link href="/" className="text-lg font-semibold">
-              YourName
+              DevFinder
             </Link>
 
             <nav aria-label="Primary" className="space-x-6">
@@ -34,7 +34,7 @@ export default function RootLayout({
 
         <footer className="bg-muted border-t">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 text-sm text-center">
-            © {new Date().getFullYear()} YourName —{' '}
+            © {new Date().getFullYear()} AndreiSas —{' '}
             <a
               href="https://github.com/andreisas/portofolio-fullstack"
               className="underline"

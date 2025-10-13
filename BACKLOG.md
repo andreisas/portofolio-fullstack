@@ -3,6 +3,7 @@
 This backlog maps roadmap items into prioritized, actionable tasks we can work on. Each item includes a suggested issue title and acceptance criteria.
 
 ## How to use
+
 - We'll work top-to-bottom. Create a branch per issue (e.g., `feat/issue-8`) and reference the issue number in commits/PRs.
 - Update this file as priorities change.
 
@@ -11,6 +12,7 @@ This backlog maps roadmap items into prioritized, actionable tasks we can work o
 ## Priority: P0 (MVP - high impact)
 
 1. Add project screenshots and live demo links (Issue: `feat/projects-media`)
+
    - Description: Add `screenshots: string[]` and `demoUrl` fields to the Project model, update API and frontend to show images and demo links on project list/detail pages.
    - Acceptance criteria:
      - Projects API responses include `screenshots` and `demoUrl`.
@@ -18,6 +20,7 @@ This backlog maps roadmap items into prioritized, actionable tasks we can work o
      - If no screenshots, a placeholder is shown.
 
 2. Contact CTA and resume download (Issue: `feat/contact-resume`)
+
    - Description: Add a persistent Contact button that opens a contact form (sends email or mailto) and a prominent resume/CV download link.
    - Acceptance criteria:
      - Contact button visible on all pages.
@@ -34,12 +37,14 @@ This backlog maps roadmap items into prioritized, actionable tasks we can work o
 ## Priority: P1 (Important)
 
 4. Minimal Admin UI for project CRUD (Issue: `feat/admin-ui`)
+
    - Description: A simple admin interface protected by admin auth to create/update/delete projects, upload screenshot URLs, toggle publish state.
    - Acceptance criteria:
      - Admin routes require `requireAdmin` middleware.
      - Projects created in Admin UI appear on the public site after publishing.
 
 5. Image handling and CDN integration (Issue: `chore/media-cdn`)
+
    - Description: Allow image uploads, add resizing (optional) and configure a CDN or static hosting for media.
    - Acceptance criteria:
      - Images uploaded are stored under `web/public/uploads` or an external CDN URL.

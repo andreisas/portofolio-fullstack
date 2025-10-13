@@ -76,6 +76,10 @@ We maintain an OpenAPI spec at `docs/openapi.yaml` and serve Swagger UI in devel
 - View docs locally after starting the API: http://localhost:4000/docs
 - The spec contains request/response examples and schemas for `User` and `Project`.
 
+## Roadmap & Vision
+
+See `ROADMAP.md` for the project vision, target personas, MVP features and prioritized next steps.
+
 ## CI and Linting
 
 CI runs tests and checks. Consider adding OpenAPI validation to CI (Spectral) if you rely on contract guarantees.

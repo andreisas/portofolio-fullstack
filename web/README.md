@@ -49,3 +49,7 @@ Notes:
 
 - If your API is not publicly available, point `NEXT_PUBLIC_API_URL` at a staging API or use Vercel environment variables to provide a test backend.
 - For production, configure a production `NEXT_PUBLIC_API_URL` value in Vercel settings.
+
+<!-- Vercel badge (replace PROJECT_ID with your Vercel project id when available) -->
+
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new)

@@ -36,7 +36,7 @@ export default function RootLayout({
           <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 text-sm text-center">
             © {new Date().getFullYear()} AndreiSas —{' '}
             <a
-              href="https://github.com/andreisas/portofolio-fullstack"
+              href="https://github.com/andreisas/devstacker"
               className="underline"
             >
               Source

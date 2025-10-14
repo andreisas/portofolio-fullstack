@@ -37,7 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Deploying to Vercel (recommended)
 
-1. Visit https://vercel.com/new and import the repository `andreisas/portofolio-fullstack`.
+1. Visit https://vercel.com/new and import the repository `andreisas/devstacker`.
 2. For the project path, select the `web/` folder.
 3. Set environment variables (Project Settings → Environment Variables):
    - `NEXT_PUBLIC_API_URL` → e.g. `https://api.example.com`

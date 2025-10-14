@@ -12,8 +12,8 @@ This README focuses on local setup, testing, and using the API docs.
 1. Clone the repo
 
 ```powershell
-git clone git@github.com:andreisas/portofolio-fullstack.git
-cd portofolio-fullstack
+git clone git@github.com:andreisas/devstacker.git
+cd devstacker
 ```
 
 2. Start the backend (API)
